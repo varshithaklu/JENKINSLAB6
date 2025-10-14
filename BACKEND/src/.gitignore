@@ -1,0 +1,15 @@
+# Eclipse workspace metadata
+.metadata/
+.settings/
+.target/
+
+# IDE-specific files
+*.classpath
+*.project
+*.iml
+
+# Logs
+*.log
+
+# Ignore frontend if it exists in workspace
+frontend/
