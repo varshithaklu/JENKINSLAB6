@@ -26,31 +26,34 @@ pipeline {
             }
         }
 
-       // ===== BACKEND BUILD =====
-stage('Build Backend') {
-    steps {
-        dir('BACKEND') {
-            bat 'mvn clean package -Pwar'
+        // ===== BACKEND BUILD =====
+        stage('Build Backend') {
+            steps {
+                dir('BACKEND') {
+                    // Build WAR (default)
+                    bat 'mvn clean package'
+                }
+            }
         }
-    }
-}
 
-// ===== BACKEND DEPLOY =====
-stage('Deploy Backend to Tomcat') {
-    steps {
-        bat '''
-        if exist "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend.war" (
-            del /Q "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend.war"
-        )
-        if exist "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend" (
-            rmdir /S /Q "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend"
-        )
-        copy "BACKEND\\target\\orderbackend.war" "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\"
-        '''
-    }
-}
+        // ===== BACKEND DEPLOY =====
+        stage('Deploy Backend to Tomcat') {
+            steps {
+                bat '''
+                set WAR_FILE=BACKEND\\target\\orderbackend.war
 
+                if exist "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend.war" (
+                    del /Q "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend.war"
+                )
 
+                if exist "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend" (
+                    rmdir /S /Q "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\orderbackend"
+                )
+
+                copy "%WAR_FILE%" "C:\\Program Files\\Apache Software Foundation\\Tomcat 10.1\\webapps\\"
+                '''
+            }
+        }
     }
 
     post {
